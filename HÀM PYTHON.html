@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Cheat Sheet — Abyss</title>
+<style>
+:root{
+  --bg:#000C18;
+  --bg-secondary:#081729;
+  --card:#10213A;
+  --card-hover:#132846;
+  --border:#1E4A7A;
+  --accent:#007ACC;
+  --accent-2:#00B7FF;
+  --text:#EAF5FF;
+  --text-secondary:#A8C7E8;
+  --success:#4CAF50;
+  --radius:14px;
+  --radius-sm:8px;
+  --mono:'JetBrains Mono','Fira Code','Cascadia Code',Consolas,monospace;
+  --sans:'Segoe UI',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:radial-gradient(ellipse at top,#001428 0%,#000C18 55%,#000814 100%);
+  color:var(--text);
+  font-family:var(--sans);
+  min-height:100vh;
+}
+::selection{background:var(--accent);color:#fff;}
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-track{background:var(--bg-secondary);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+::-webkit-scrollbar-thumb:hover{background:var(--accent);}
+
+.app{display:grid;grid-template-columns:264px 1fr;min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{
+  position:sticky;top:0;height:100vh;
+  background:linear-gradient(180deg,rgba(8,23,41,.96),rgba(0,12,24,.98));
+  border-right:1px solid var(--border);
+  padding:20px 14px;overflow-y:auto;
+  backdrop-filter:blur(10px);z-index:50;
+}
+.brand{display:flex;align-items:center;gap:10px;padding:6px 10px 20px 10px;border-bottom:1px solid var(--border);margin-bottom:14px;}
+.brand-dot{width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 30% 30%,var(--accent-2),var(--accent));box-shadow:0 0 12px var(--accent-2);animation:pulse 2.6s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.6;transform:scale(1.2);}}
+.brand-text{font-weight:700;font-size:15px;}
+.brand-sub{font-size:11px;color:var(--text-secondary);}
+
+.nav-item{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius-sm);
+  cursor:pointer;color:var(--text-secondary);font-size:13.5px;margin-bottom:2px;user-select:none;
+  transition:background .18s ease,color .18s ease,transform .18s ease;
+}
+.nav-item:hover{background:var(--card-hover);color:var(--text);transform:translateX(3px);}
+.nav-item.active{background:linear-gradient(90deg,rgba(0,122,204,.28),rgba(0,183,255,.05));color:#fff;box-shadow:inset 3px 0 0 var(--accent-2);}
+.nav-count{margin-left:auto;font-size:10.5px;background:rgba(0,122,204,.2);color:var(--accent-2);padding:2px 7px;border-radius:20px;min-width:22px;text-align:center;transition:transform .2s ease;}
+
+/* MAIN */
+.main{padding:0 32px 60px 32px;min-width:0;}
+.header{
+  position:sticky;top:0;z-index:40;background:rgba(0,12,24,.86);backdrop-filter:blur(14px);
+  padding:22px 0 16px 0;border-bottom:1px solid var(--border);margin-bottom:24px;
+}
+.title-row{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+.title{font-size:28px;font-weight:800;background:linear-gradient(90deg,#fff,var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.subtitle{color:var(--text-secondary);font-size:13px;margin-top:2px;}
+
+.search-wrap{position:relative;flex:1;min-width:240px;max-width:480px;}
+.search-input{
+  width:100%;background:var(--bg-secondary);border:1px solid var(--border);color:var(--text);
+  padding:11px 14px 11px 38px;border-radius:10px;font-size:13.5px;outline:none;
+  transition:border-color .2s ease,box-shadow .2s ease;
+}
+.search-input:focus{border-color:var(--accent-2);box-shadow:0 0 0 3px rgba(0,183,255,.15);}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-secondary);font-size:14px;}
+.search-kbd{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:10px;color:var(--text-secondary);border:1px solid var(--border);padding:2px 6px;border-radius:5px;}
+
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+.btn{
+  background:var(--card);border:1px solid var(--border);color:var(--text);padding:8px 13px;border-radius:8px;
+  font-size:12.5px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);
+  transition:background .18s ease,transform .18s ease,box-shadow .18s ease;
+}
+.btn:hover{background:var(--accent);border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,122,204,.35);}
+.btn:active{transform:translateY(0);}
+.btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));border:none;}
+.btn.ghost{background:transparent;}
+
+.category-section{margin-bottom:44px;}
+.category-heading{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:700;margin-bottom:16px;padding-bottom:10px;border-bottom:1px dashed var(--border);}
+.count-pill{font-size:11px;background:var(--card);border:1px solid var(--border);color:var(--text-secondary);padding:3px 9px;border-radius:20px;}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:18px;}
+
+/* CARD — perf: content-visibility bỏ qua render phần ngoài màn hình */
+.card{
+  content-visibility:auto;
+  contain-intrinsic-size:340px;
+  contain:content;
+  background:linear-gradient(160deg,var(--card) 0%,rgba(16,33,58,.7) 100%);
+  border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;
+  box-shadow:0 2px 10px rgba(0,0,0,.3);
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+}
+.card:hover{transform:translateY(-4px);box-shadow:0 10px 26px rgba(0,0,0,.45);border-color:var(--accent);}
+.card.hidden{display:none;}
+
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;background:rgba(0,122,204,.06);border-bottom:1px solid var(--border);cursor:pointer;}
+.card-title{font-weight:600;font-size:14.5px;display:flex;align-items:center;gap:8px;}
+.card-title .idx{color:var(--text-secondary);font-size:11px;font-weight:400;}
+.card-actions{display:flex;gap:6px;}
+.icon-btn{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text-secondary);width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;transition:background .18s ease,color .18s ease,transform .18s ease;}
+.icon-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent);transform:scale(1.08);}
+.icon-btn.fav.active{color:#FFD166;border-color:#FFD166;background:rgba(255,209,102,.1);}
+.icon-btn.copied{background:var(--success);border-color:var(--success);color:#fff;}
+
+.card-body{padding:16px;overflow:hidden;transition:max-height .25s ease,opacity .2s ease,padding .25s ease;}
+.card-body.collapsed{max-height:0!important;padding-top:0;padding-bottom:0;opacity:0;}
+
+.desc{color:var(--text-secondary);font-size:13px;margin-bottom:12px;line-height:1.5;}
+
+.code-block{background:#00060E;border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;font-family:var(--mono);font-size:12.6px;line-height:1.65;overflow-x:auto;white-space:pre;margin-bottom:12px;}
+.tok-kw{color:#7FB7E8;font-weight:600;}
+.tok-str{color:#F2C879;}
+.tok-num{color:#8FD19E;}
+.tok-com{color:#5C7896;font-style:italic;}
+.tok-fn{color:#00B7FF;}
+.tok-op{color:#EAF5FF;}
+.tok-builtin{color:#C792EA;}
+.tok-self{color:#E27E8D;font-style:italic;}
+
+.meta-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+.meta-chip{font-size:11px;padding:4px 10px;border-radius:20px;background:rgba(0,122,204,.1);border:1px solid var(--border);color:var(--text-secondary);}
+.meta-chip b{color:var(--accent-2);}
+
+.example-label{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--accent-2);margin:10px 0 5px 0;font-weight:700;}
+.example-box{background:var(--bg-secondary);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;padding:10px 12px;font-family:var(--mono);font-size:12px;color:var(--text-secondary);white-space:pre-wrap;}
+
+.empty-state{text-align:center;padding:60px 20px;color:var(--text-secondary);}
+.empty-state .big{font-size:40px;margin-bottom:10px;}
+
+.footer{margin-top:50px;padding:24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;color:var(--text-secondary);font-size:12.5px;}
+.footer b{color:var(--text);}
+
+.fab{position:fixed;bottom:26px;right:26px;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 24px rgba(0,122,204,.5);opacity:0;pointer-events:none;z-index:60;font-size:18px;transition:opacity .2s ease,transform .2s ease;}
+.fab.show{opacity:1;pointer-events:auto;}
+.fab:hover{transform:translateY(-4px) scale(1.05);}
+
+.menu-toggle{display:none;width:38px;height:38px;border-radius:8px;background:var(--card);border:1px solid var(--border);color:var(--text);align-items:center;justify-content:center;cursor:pointer;margin-right:10px;}
+
+@media (max-width:900px){
+  .app{grid-template-columns:1fr;}
+  .sidebar{position:fixed;left:-264px;transition:left .25s ease;height:100vh;}
+  .sidebar.open{left:0;}
+  .main{padding:0 16px 60px 16px;}
+  .grid{grid-template-columns:1fr;}
+  .menu-toggle{display:flex!important;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms!important;transition-duration:.001ms!important;}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-dot"></div>
+      <div>
+        <div class="brand-text">Python Cheat Sheet</div>
+        <div class="brand-sub">Abyss Edition</div>
+      </div>
+    </div>
+    <div id="navGroup"></div>
+  </aside>
+
+  <main class="main">
+    <div class="header">
+      <div class="title-row">
+        <div style="display:flex;align-items:center;">
+          <div class="menu-toggle" id="menuToggle">☰</div>
+          <div>
+            <div class="title">Python Cheat Sheet</div>
+            <div class="subtitle">Tra cứu nhanh — tìm kiếm, lưu yêu thích và sao chép code Python.</div>
+          </div>
+        </div>
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" id="searchInput" placeholder="Tìm tên hàm...">
+          <span class="search-kbd">Ctrl+F</span>
+        </div>
+      </div>
+      <div class="toolbar">
+        <button class="btn primary" id="copyAllBtn">📋 Sao chép tất cả</button>
+        <button class="btn" id="expandAllBtn">⬆ Mở rộng tất cả</button>
+        <button class="btn" id="collapseAllBtn">⬇ Thu gọn tất cả</button>
+        <button class="btn" id="exportTxtBtn">📄 Xuất TXT</button>
+        <button class="btn" id="exportPyBtn">🐍 Xuất PY</button>
+        <button class="btn ghost" id="backToTopBtn">⬆ Lên đầu trang</button>
+      </div>
+    </div>
+
+    <div id="content"></div>
+
+    <div class="footer">
+      <div>Tổng số hàm: <b id="totalCount">0</b></div>
+      <div>Số hàm yêu thích: <b id="favCount">0</b></div>
+      <div>Phiên bản: <b>v2.0</b></div>
+      <div>Cập nhật lần cuối: <b>07/2026</b></div>
+    </div>
+  </main>
+</div>
+
+<div class="fab" id="fab" title="Lên đầu trang (Ctrl+B)">↑</div>
+
+<script>
+/* ============================================================
+   DỮ LIỆU DANH MỤC
+   ============================================================ */
+const CATEGORIES = [
+  {id:'favorites', icon:'⭐', label:'Yêu thích'},
+  {id:'number',    icon:'🔢', label:'Số học'},
+  {id:'string',    icon:'🔤', label:'Chuỗi'},
+  {id:'list',      icon:'📋', label:'Danh sách (List)'},
+  {id:'tuple',     icon:'📚', label:'Tuple'},
+  {id:'set',       icon:'🗂', label:'Set'},
+  {id:'dict',      icon:'📖', label:'Dictionary'},
+  {id:'math',      icon:'📐', label:'Math'},
+  {id:'algo',      icon:'⚡', label:'Thuật toán'},
+  {id:'builtin',   icon:'🧰', label:'Hàm dựng sẵn'},
+];
+
+function F(cat,title,code,desc,complexity,example){
+  return {cat,title,code:code.trim(),desc,complexity,example:(example||'').trim()};
+}
+
+const FUNCS = [
+/* ================= SỐ HỌC ================= */
+F('number','Số nguyên tố','def snt(n):\n    i=2\n    while i*i<=n and n%i:i+=1\n    return n>1 and i*i>n','Kiểm tra một số có phải số nguyên tố hay không.','O(√n)','snt(17) -> True'),
+F('number','Số chính phương','def scp(n):\n    return n>=0 and int(n**0.5)**2==n','Kiểm tra một số có phải số chính phương.','O(1)','scp(49) -> True'),
+F('number','Số Harshad','def harshad(n):\n    return n%sum(map(int,str(n)))==0','Số chia hết cho tổng các chữ số của nó.','O(log n)','harshad(18) -> True'),
+F('number','Số Armstrong','def armstrong(n):\n    d=str(n);p=len(d)\n    return n==sum(int(c)**p for c in d)','Số bằng tổng các chữ số lũy thừa theo số chữ số.','O(log n)','armstrong(153) -> True'),
+F('number','Số hoàn hảo','def perfect(n):\n    return n==sum(i for i in range(1,n) if n%i==0)','Số bằng tổng các ước thực sự của nó.','O(n)','perfect(28) -> True'),
+F('number','Strong Number','import math\ndef strong(n):\n    return n==sum(math.factorial(int(c)) for c in str(n))','Số bằng tổng giai thừa các chữ số của nó.','O(log n)','strong(145) -> True'),
+F('number','Automorphic','def auto(n):\n    return str(n*n).endswith(str(n))','Số mà bình phương của nó kết thúc bằng chính nó.','O(log n)','auto(25) -> True'),
+F('number','Palindrome số','def pal_num(n):\n    return str(n)==str(n)[::-1]','Số đọc xuôi và ngược giống nhau.','O(log n)','pal_num(1221) -> True'),
+F('number','Duck Number','def duck(n):\n    s=str(n)\n    return "0" in s and not s.startswith("0")','Số chứa chữ số 0 nhưng không đứng đầu.','O(log n)','duck(3021) -> True'),
+F('number','Neon Number','def neon(n):\n    return sum(map(int,str(n*n)))==n','Tổng chữ số của bình phương bằng chính số đó.','O(log n)','neon(9) -> True'),
+F('number','Happy Number','def happy(n):\n    seen=set()\n    while n!=1 and n not in seen:\n        seen.add(n);n=sum(int(c)**2 for c in str(n))\n    return n==1','Số luôn tiến về 1 khi lặp tổng bình phương chữ số.','O(log n)','happy(19) -> True'),
+F('number','Kaprekar Number','def kaprekar(n):\n    s=str(n*n)\n    return any(int(s[:i] or 0)+int(s[i:] or 0)==n for i in range(1,len(s)))','Bình phương có thể tách thành 2 phần cộng lại bằng số gốc.','O(log n)','kaprekar(45) -> True'),
+F('number','Disarium Number','def disarium(n):\n    d=str(n)\n    return n==sum(int(c)**(i+1) for i,c in enumerate(d))','Tổng các chữ số lũy thừa theo vị trí bằng chính số đó.','O(log n)','disarium(89) -> True'),
+F('number','Smith Number','def smith(n):\n    def pf(x):\n        f,d=[],2\n        while d*d<=x:\n            while x%d==0:f.append(d);x//=d\n            d+=1\n        return f+[x] if x>1 else f\n    return not snt(n) and sum(map(int,str(n)))==sum(int(c) for p in pf(n) for c in str(p))','Hợp số có tổng chữ số bằng tổng chữ số các thừa số nguyên tố.','O(√n)','smith(666) -> True'),
+F('number','Kiểm tra Fibonacci','def is_fib(n):\n    a,b=0,1\n    while a<n:a,b=b,a+b\n    return a==n','Kiểm tra một số có nằm trong dãy Fibonacci.','O(log n)','is_fib(21) -> True'),
+F('number','GCD (ƯCLN)','def gcd(a,b):\n    while b:a,b=b,a%b\n    return a','Ước chung lớn nhất bằng thuật toán Euclid.','O(log(min(a,b)))','gcd(48,18) -> 6'),
+F('number','LCM (BCNN)','def lcm(a,b):\n    return a*b//gcd(a,b)','Bội chung nhỏ nhất dựa trên GCD.','O(log(min(a,b)))','lcm(4,6) -> 12'),
+F('number','Liệt kê ước số','def uoc(n):\n    return [i for i in range(1,n+1) if n%i==0]','Trả về danh sách tất cả ước dương của n.','O(n)','uoc(12) -> [1,2,3,4,6,12]'),
+F('number','Phân tích thừa số nguyên tố','def ptnt(n):\n    f,d=[],2\n    while d*d<=n:\n        while n%d==0:f.append(d);n//=d\n        d+=1\n    return f+[n] if n>1 else f','Phân tích một số thành các thừa số nguyên tố.','O(√n)','ptnt(60) -> [2,2,3,5]'),
+F('number','Tổng chữ số','def tong_cs(n):\n    return sum(map(int,str(abs(n))))','Tính tổng các chữ số của một số.','O(log n)','tong_cs(1234) -> 10'),
+F('number','Tích chữ số','def tich_cs(n):\n    p=1\n    for c in str(abs(n)):p*=int(c)\n    return p','Tính tích các chữ số của một số.','O(log n)','tich_cs(129) -> 18'),
+F('number','Đếm chữ số','def dem_cs(n):\n    return len(str(abs(n)))','Đếm số lượng chữ số của một số.','O(log n)','dem_cs(9834) -> 4'),
+F('number','Đảo số','def dao_so(n):\n    s=-1 if n<0 else 1\n    return s*int(str(abs(n))[::-1])','Đảo ngược thứ tự các chữ số, giữ nguyên dấu.','O(log n)','dao_so(-1234) -> -4321'),
+F('number','Số chẵn','def chan(n):\n    return n%2==0','Kiểm tra số chẵn.','O(1)','chan(4) -> True'),
+F('number','Số lẻ','def le(n):\n    return n%2!=0','Kiểm tra số lẻ.','O(1)','le(7) -> True'),
+F('number','Số ngẫu nhiên','import random\ndef ngau_nhien(a,b):\n    return random.randint(a,b)','Sinh số nguyên ngẫu nhiên trong khoảng [a,b].','O(1)','ngau_nhien(1,6) -> 4'),
+F('number','Số thực ngẫu nhiên','import random\ndef ngau_nhien_thuc(a,b):\n    return random.uniform(a,b)','Sinh số thực ngẫu nhiên trong khoảng [a,b].','O(1)','ngau_nhien_thuc(0,1) -> 0.73'),
+F('number','Chuyển sang nhị phân','def nhi_phan(n):\n    return bin(n)[2:]','Chuyển số thập phân sang chuỗi nhị phân.','O(log n)','nhi_phan(10) -> "1010"'),
+F('number','Chuyển sang bát phân','def bat_phan(n):\n    return oct(n)[2:]','Chuyển số thập phân sang chuỗi bát phân.','O(log n)','bat_phan(8) -> "10"'),
+F('number','Chuyển sang thập lục phân','def thap_luc_phan(n):\n    return hex(n)[2:]','Chuyển số thập phân sang chuỗi hex.','O(log n)','thap_luc_phan(255) -> "ff"'),
+F('number','Chuyển về thập phân','def ve_thap_phan(s,base):\n    return int(s,base)','Chuyển chuỗi ở hệ cơ số bất kỳ về thập phân.','O(len(s))','ve_thap_phan("1010",2) -> 10'),
+F('number','Giai thừa','def giai_thua(n):\n    r=1\n    for i in range(2,n+1):r*=i\n    return r','Tính n giai thừa (n!) bằng vòng lặp.','O(n)','giai_thua(5) -> 120'),
+F('number','Lũy thừa nhanh','def luy_thua(a,n):\n    r=1\n    while n:\n        if n&1:r*=a\n        a*=a;n>>=1\n    return r','Tính a^n bằng lũy thừa nhị phân nhanh.','O(log n)','luy_thua(2,10) -> 1024'),
+F('number','Số Catalan','def catalan(n):\n    if n<=1:return 1\n    c=[1]*(n+1)\n    for i in range(2,n+1):\n        c[i]=sum(c[j]*c[i-1-j] for j in range(i))\n    return c[n]','Tính số Catalan thứ n bằng quy hoạch động.','O(n²)','catalan(4) -> 14'),
+F('number','Tam giác Pascal','def pascal(rows):\n    t=[[1]*(i+1) for i in range(rows)]\n    for i in range(2,rows):\n        for j in range(1,i):t[i][j]=t[i-1][j-1]+t[i-1][j]\n    return t','Sinh tam giác Pascal với số hàng cho trước.','O(rows²)','pascal(4) -> [[1],[1,1],[1,2,1],[1,3,3,1]]'),
+F('number','Dãy Collatz','def collatz(n):\n    seq=[n]\n    while n!=1:\n        n=n//2 if n%2==0 else 3*n+1\n        seq.append(n)\n    return seq','Sinh dãy Collatz (3n+1) cho tới khi đạt 1.','O(?), thường ngắn','collatz(6) -> [6,3,10,5,16,8,4,2,1]'),
+F('number','Số tam giác','def so_tam_giac(n):\n    return n*(n+1)//2','Tính số tam giác thứ n (tổng 1..n).','O(1)','so_tam_giac(5) -> 15'),
+F('number','Năm nhuận','def nam_nhuan(y):\n    return y%4==0 and (y%100!=0 or y%400==0)','Kiểm tra một năm có phải năm nhuận.','O(1)','nam_nhuan(2024) -> True'),
+F('number','Spy Number','def spy(n):\n    d=[int(c) for c in str(n)]\n    p=1\n    for x in d:p*=x\n    return sum(d)==p','Số có tổng chữ số bằng tích chữ số.','O(log n)','spy(1124) -> True'),
+F('number','Số nguyên tố cùng nhau','def coprime(a,b):\n    return gcd(a,b)==1','Kiểm tra hai số có nguyên tố cùng nhau không.','O(log(min(a,b)))','coprime(8,15) -> True'),
+F('number','Euler Totient','def phi(n):\n    r=n;p=2;t=n\n    while p*p<=t:\n        if t%p==0:\n            while t%p==0:t//=p\n            r-=r//p\n        p+=1\n    if t>1:r-=r//t\n    return r','Đếm các số nhỏ hơn n và nguyên tố cùng nhau với n.','O(√n)','phi(9) -> 6'),
+F('number','Tổng các ước','def tong_uoc(n):\n    return sum(i for i in range(1,n+1) if n%i==0)','Tính tổng tất cả ước dương của n.','O(n)','tong_uoc(12) -> 28'),
+F('number','Số dư (Abundant)','def abundant(n):\n    return sum(i for i in range(1,n) if n%i==0)>n','Tổng ước thực sự lớn hơn chính số đó.','O(n)','abundant(12) -> True'),
+F('number','Số thiếu (Deficient)','def deficient(n):\n    return sum(i for i in range(1,n) if n%i==0)<n','Tổng ước thực sự nhỏ hơn chính số đó.','O(n)','deficient(8) -> True'),
+F('number','Bình phương cuối cùng của tổng chữ số','def digital_root(n):\n    while n>=10:n=sum(map(int,str(n)))\n    return n','Rút gọn số về một chữ số bằng cách lặp cộng chữ số.','O(log n)','digital_root(9875) -> 2'),
+
+/* ================= CHUỖI ================= */
+F('string','Đảo chuỗi','def dao_chuoi(s):\n    return s[::-1]','Đảo ngược một chuỗi bằng slicing.','O(n)','dao_chuoi("hello") -> "olleh"'),
+F('string','Palindrome chuỗi','def pal_str(s):\n    s=s.lower().replace(" ","")\n    return s==s[::-1]','Kiểm tra chuỗi đối xứng, bỏ qua hoa/thường và khoảng trắng.','O(n)','pal_str("A man a plan") -> True'),
+F('string','Đếm ký tự con','s="banana"\ns.count("a")  # -> 3','Đếm số lần xuất hiện không chồng lấn của ký tự con.','O(n)'),
+F('string','Thay thế chuỗi','s="I like cats"\ns.replace("cats","dogs")  # -> "I like dogs"','Thay thế tất cả các đoạn con trong chuỗi.','O(n)'),
+F('string','Tách chuỗi (split)','s="a,b,c"\ns.split(",")  # -> ["a","b","c"]','Tách chuỗi thành danh sách theo dấu phân cách.','O(n)'),
+F('string','Nối chuỗi (join)','words=["a","b","c"]\n"-".join(words)  # -> "a-b-c"','Nối một danh sách chuỗi bằng ký tự phân cách.','O(n)'),
+F('string','Loại bỏ khoảng trắng','s="   hi   "\ns.strip()  # -> "hi"','Xóa khoảng trắng thừa ở đầu và cuối chuỗi.','O(n)'),
+F('string','Tìm vị trí (find)','s="hello world"\ns.find("world")  # -> 6','Trả về vị trí đầu tiên tìm thấy, -1 nếu không có.','O(n)'),
+F('string','Tìm vị trí (index)','s="hello"\ns.index("l")  # -> 2','Giống find nhưng báo lỗi nếu không tìm thấy.','O(n)'),
+F('string','Chữ hoa (upper)','"abc".upper()  # -> "ABC"','Chuyển toàn bộ chuỗi thành chữ hoa.','O(n)'),
+F('string','Chữ thường (lower)','"ABC".lower()  # -> "abc"','Chuyển toàn bộ chuỗi thành chữ thường.','O(n)'),
+F('string','Viết hoa đầu từ (title)','"the sky".title()  # -> "The Sky"','Viết hoa chữ cái đầu mỗi từ.','O(n)'),
+F('string','Đảo hoa/thường (swapcase)','"AbC".swapcase()  # -> "aBc"','Đảo ngược hoa/thường của từng ký tự.','O(n)'),
+F('string','Định dạng format()','"{} {} tuổi".format("Ana",25)\n# -> "Ana 25 tuổi"','Chèn giá trị vào chuỗi qua placeholder {}.','O(n)'),
+F('string','F-string','name,age="Ana",25\nf"{name} {age} tuổi"\n# -> "Ana 25 tuổi"','Nhúng biểu thức trực tiếp trong chuỗi (Python 3.6+).','O(n)'),
+F('string','Regex cơ bản','import re\nre.findall(r"\\d+","a1b22")\n# -> ["1","22"]','Dùng module re để tìm các mẫu khớp trong chuỗi.','O(n)'),
+F('string','Mã ASCII (ord)','ord("A")  # -> 65','Trả về mã ASCII/Unicode của một ký tự.','O(1)'),
+F('string','Ký tự từ mã (chr)','chr(65)  # -> "A"','Trả về ký tự tương ứng với mã Unicode.','O(1)'),
+F('string','Tần suất ký tự','from collections import Counter\ndef tan_suat_ky_tu(s):\n    return dict(Counter(s))','Đếm số lần xuất hiện mỗi ký tự trong chuỗi.','O(n)','tan_suat_ky_tu("hello") -> {"h":1,"e":1,"l":2,"o":1}'),
+F('string','Tần suất từ','from collections import Counter\ndef tan_suat_tu(s):\n    return dict(Counter(s.split()))','Đếm số lần xuất hiện mỗi từ trong câu.','O(n)','tan_suat_tu("a a b") -> {"a":2,"b":1}'),
+F('string','Kiểm tra Anagram','def anagram(a,b):\n    return sorted(a.lower())==sorted(b.lower())','Kiểm tra hai chuỗi có phải là đảo chữ của nhau.','O(n log n)','anagram("listen","silent") -> True'),
+F('string','Kiểm tra là số (isdigit)','"12345".isdigit()  # -> True','Kiểm tra chuỗi chỉ gồm các chữ số.','O(n)'),
+F('string','Kiểm tra chữ cái (isalpha)','"abcXYZ".isalpha()  # -> True','Kiểm tra chuỗi chỉ gồm chữ cái.','O(n)'),
+F('string','Chuỗi thành danh sách ký tự','list("abc")  # -> ["a","b","c"]','Chuyển một chuỗi thành list các ký tự.','O(n)'),
+F('string','Cắt chuỗi (slicing)','s="python"\ns[1:4]  # -> "yth"','Trích một đoạn con của chuỗi bằng slicing.','O(k)'),
+F('string','Kiểm tra chuỗi con','"lo w" in "hello world"  # -> True','Kiểm tra một chuỗi có chứa chuỗi con khác.','O(n)'),
+F('string','Viết hoa chữ đầu (capitalize)','"hello world".capitalize()\n# -> "Hello world"','Viết hoa chữ cái đầu tiên của chuỗi.','O(n)'),
+F('string','So sánh không phân biệt hoa/thường','def eq_ci(a,b):\n    return a.lower()==b.lower()','So sánh hai chuỗi bỏ qua chữ hoa/thường.','O(n)','eq_ci("Hi","hi") -> True'),
+F('string','Xóa ký tự trùng, giữ thứ tự','def unique_chars(s):\n    return "".join(dict.fromkeys(s))','Loại bỏ ký tự lặp lại nhưng giữ nguyên thứ tự.','O(n)','unique_chars("aabbcc") -> "abc"'),
+F('string','Đếm số từ trong câu','s="hoc python moi ngay"\nlen(s.split())  # -> 4','Đếm số lượng từ được tách bởi khoảng trắng.','O(n)'),
+F('string','Đảo thứ tự từng từ','def dao_tu(s):\n    return " ".join(s.split()[::-1])','Đảo ngược thứ tự các từ trong câu.','O(n)','dao_tu("hoc python moi ngay") -> "ngay moi python hoc"'),
+F('string','Đệm số 0 (zfill)','"7".zfill(3)  # -> "007"','Đệm chuỗi số bằng số 0 ở bên trái.','O(n)'),
+F('string','Căn giữa chuỗi (center)','"hi".center(10,"*")\n# -> "****hi****"','Căn giữa chuỗi trong độ rộng cho trước.','O(n)'),
+F('string','Kiểm tra chuỗi rỗng','def is_empty(s):\n    return len(s.strip())==0','Kiểm tra chuỗi rỗng hoặc chỉ chứa khoảng trắng.','O(n)','is_empty("   ") -> True'),
+
+/* ================= LIST ================= */
+F('list','append()','lst=[1,2,3]\nlst.append(4)  # -> [1,2,3,4]','Thêm một phần tử vào cuối danh sách.','O(1)'),
+F('list','extend()','lst=[1,2]\nlst.extend([3,4])  # -> [1,2,3,4]','Nối thêm toàn bộ phần tử từ iterable khác.','O(k)'),
+F('list','insert()','lst=[1,3]\nlst.insert(1,2)  # -> [1,2,3]','Chèn phần tử vào vị trí chỉ định.','O(n)'),
+F('list','remove()','lst=[1,2,3]\nlst.remove(2)  # -> [1,3]','Xóa phần tử đầu tiên có giá trị chỉ định.','O(n)'),
+F('list','pop()','lst=[1,2,3]\nlst.pop()  # -> 3, lst=[1,2]','Xóa và trả về phần tử tại vị trí (mặc định cuối).','O(1)'),
+F('list','reverse()','lst=[1,2,3]\nlst.reverse()  # -> [3,2,1]','Đảo ngược danh sách tại chỗ.','O(n)'),
+F('list','sort()','lst=[3,1,2]\nlst.sort()  # -> [1,2,3]','Sắp xếp danh sách tại chỗ (Timsort).','O(n log n)'),
+F('list','List Comprehension','binhphuong=[x*x for x in range(5)]\n# -> [0,1,4,9,16]','Tạo danh sách mới bằng cú pháp vòng lặp rút gọn.','O(n)'),
+F('list','zip()','a=[1,2];b=["x","y"]\nlist(zip(a,b))\n# -> [(1,"x"),(2,"y")]','Ghép các iterable theo từng cặp phần tử.','O(n)'),
+F('list','enumerate()','for i,v in enumerate(["a","b"]):print(i,v)\n# 0 a\n# 1 b','Duyệt danh sách kèm theo chỉ số.','O(n)'),
+F('list','map()','list(map(lambda x:x*2,[1,2,3]))\n# -> [2,4,6]','Áp dụng hàm cho từng phần tử của iterable.','O(n)'),
+F('list','filter()','list(filter(lambda x:x%2==0,[1,2,3,4]))\n# -> [2,4]','Lọc phần tử theo điều kiện cho trước.','O(n)'),
+F('list','Làm phẳng danh sách (flatten)','def flatten(lst):\n    return [x for sub in lst for x in sub]','Gộp danh sách lồng nhau thành danh sách phẳng.','O(n)','flatten([[1,2],[3],[4,5]]) -> [1,2,3,4,5]'),
+F('list','Loại phần tử trùng','def unique(lst):\n    return list(dict.fromkeys(lst))','Loại bỏ phần tử trùng, giữ nguyên thứ tự.','O(n)','unique([1,2,2,3,1]) -> [1,2,3]'),
+F('list','Xoay danh sách (rotate)','def rotate(lst,k):\n    k%=len(lst)\n    return lst[-k:]+lst[:-k]','Xoay phải danh sách theo k vị trí.','O(n)','rotate([1,2,3,4,5],2) -> [4,5,1,2,3]'),
+F('list','Trộn ngẫu nhiên (shuffle)','import random\nlst=[1,2,3]\nrandom.shuffle(lst)','Xáo trộn ngẫu nhiên các phần tử tại chỗ.','O(n)'),
+F('list','Giá trị lớn nhất (max)','max([3,7,2])  # -> 7','Trả về phần tử lớn nhất trong iterable.','O(n)'),
+F('list','Giá trị nhỏ nhất (min)','min([3,7,2])  # -> 2','Trả về phần tử nhỏ nhất trong iterable.','O(n)'),
+F('list','Tổng danh sách (sum)','sum([1,2,3])  # -> 6','Tính tổng các phần tử số trong danh sách.','O(n)'),
+F('list','Trung bình cộng','def trung_binh(lst):\n    return sum(lst)/len(lst)','Tính trung bình cộng các phần tử.','O(n)','trung_binh([2,4,6]) -> 4.0'),
+F('list','Cắt danh sách (slicing)','lst=[0,1,2,3,4]\nlst[1:4]  # -> [1,2,3]','Trích một đoạn con của danh sách.','O(k)'),
+F('list','Sao chép danh sách (copy)','lst=[1,2,3]\nlst2=lst.copy()','Tạo bản sao nông (shallow copy) của danh sách.','O(n)'),
+F('list','Đếm phần tử (count)','lst=[1,2,2,3]\nlst.count(2)  # -> 2','Đếm số lần xuất hiện của một giá trị.','O(n)'),
+F('list','Sắp xếp theo key','lst=["bb","a","ccc"]\nsorted(lst,key=len)\n# -> ["a","bb","ccc"]','Sắp xếp danh sách theo hàm khóa tùy chỉnh.','O(n log n)'),
+F('list','Chia danh sách thành nhóm','def chia_nhom(lst,n):\n    return [lst[i:i+n] for i in range(0,len(lst),n)]','Chia danh sách thành các nhóm con kích thước n.','O(n)','chia_nhom([1,2,3,4,5],2) -> [[1,2],[3,4],[5]]'),
+F('list','Tìm phần tử trùng lặp','def trung_lap(lst):\n    return list({x for x in lst if lst.count(x)>1})','Tìm các phần tử xuất hiện nhiều hơn 1 lần.','O(n²)','trung_lap([1,2,2,3,3,3]) -> [2,3]'),
+F('list','Phần tử xuất hiện nhiều nhất','from collections import Counter\ndef mode(lst):\n    return Counter(lst).most_common(1)[0][0]','Tìm phần tử xuất hiện nhiều nhất trong danh sách.','O(n)','mode([1,2,2,3]) -> 2'),
+F('list','Gộp hai danh sách','a=[1,2];b=[3,4]\na+b  # -> [1,2,3,4]','Nối hai danh sách thành một danh sách mới.','O(n+m)'),
+F('list','Giao của hai danh sách','def giao(a,b):\n    return list(set(a)&set(b))','Tìm các phần tử chung giữa hai danh sách.','O(n+m)','giao([1,2,3],[2,3,4]) -> [2,3]'),
+F('list','Hiệu của hai danh sách','def hieu(a,b):\n    return list(set(a)-set(b))','Tìm phần tử có trong a nhưng không có trong b.','O(n+m)','hieu([1,2,3],[2]) -> [1,3]'),
+
+/* ================= TUPLE ================= */
+F('tuple','Tạo tuple','t=(1,2,3)\nt2=1,2,3  # ngoặc không bắt buộc','Tạo một tập hợp có thứ tự, bất biến.','O(n)'),
+F('tuple','Giải nén tuple','x,y,z=(1,2,3)\n# x=1, y=2, z=3','Gán trực tiếp các phần tử của tuple vào biến.','O(n)'),
+F('tuple','Đếm phần tử (count)','t=(1,2,2,3)\nt.count(2)  # -> 2','Đếm số lần xuất hiện của một giá trị trong tuple.','O(n)'),
+F('tuple','Tìm chỉ số (index)','t=(10,20,30)\nt.index(20)  # -> 1','Tìm vị trí đầu tiên của một giá trị trong tuple.','O(n)'),
+F('tuple','Tuple lồng nhau','t=((1,2),(3,4))\nt[0][1]  # -> 2','Tuple có thể chứa các tuple khác bên trong.','O(1)'),
+F('tuple','Tính bất biến của tuple','t=(1,2,3)\ntry:\n    t[0]=99\nexcept TypeError:\n    print("Không thể sửa tuple")','Minh họa việc không thể thay đổi phần tử của tuple.','O(1)'),
+F('tuple','Chuyển tuple sang list','t=(1,2,3)\nlist(t)  # -> [1,2,3]','Chuyển đổi tuple thành danh sách để có thể sửa đổi.','O(n)'),
+F('tuple','Chuyển list sang tuple','lst=[1,2,3]\ntuple(lst)  # -> (1,2,3)','Chuyển đổi danh sách thành tuple bất biến.','O(n)'),
+F('tuple','So sánh tuple','(1,2,3)==(1,2,3)  # -> True\n(1,2)<(1,3)  # -> True','So sánh tuple theo từng phần tử tương ứng.','O(n)'),
+F('tuple','Named Tuple','from collections import namedtuple\nDiem=namedtuple("Diem",["x","y"])\np=Diem(1,2)\np.x  # -> 1','Tạo tuple có tên trường để code dễ đọc hơn.','O(1)'),
+
+/* ================= SET ================= */
+F('set','Hợp (Union)','a={1,2,3};b={3,4,5}\na|b  # -> {1,2,3,4,5}','Gộp tất cả phần tử duy nhất từ hai tập hợp.','O(n+m)'),
+F('set','Giao (Intersection)','a={1,2,3};b={2,3,4}\na&b  # -> {2,3}','Tìm các phần tử chung giữa hai tập hợp.','O(min(n,m))'),
+F('set','Hiệu (Difference)','a={1,2,3};b={2,3}\na-b  # -> {1}','Tìm phần tử có ở tập a nhưng không có ở b.','O(n)'),
+F('set','Hiệu đối xứng (Symmetric Difference)','a={1,2,3};b={2,3,4}\na^b  # -> {1,4}','Tìm phần tử chỉ thuộc một trong hai tập hợp.','O(n+m)'),
+F('set','Tập con (Subset)','a={1,2};b={1,2,3}\na.issubset(b)  # -> True','Kiểm tra tập a có phải tập con của b.','O(n)'),
+F('set','Tập cha (Superset)','a={1,2,3};b={1,2}\na.issuperset(b)  # -> True','Kiểm tra tập a có chứa toàn bộ tập b.','O(n)'),
+F('set','Frozen Set','fs=frozenset([1,2,3])\n# fs.add(4) -> lỗi AttributeError','Tạo tập hợp bất biến, có thể dùng làm khóa dict.','O(n)'),
+F('set','Thêm phần tử vào set','s={1,2}\ns.add(3)  # -> {1,2,3}','Thêm một phần tử mới vào tập hợp.','O(1)'),
+F('set','Xóa phần tử khỏi set','s={1,2,3}\ns.discard(2)  # -> {1,3}','Xóa phần tử khỏi tập hợp (không lỗi nếu không tồn tại).','O(1)'),
+F('set','Kiểm tra rời rạc (Disjoint)','a={1,2};b={3,4}\na.isdisjoint(b)  # -> True','Kiểm tra hai tập hợp không có phần tử chung.','O(min(n,m))'),
+
+/* ================= DICTIONARY ================= */
+F('dict','get() với giá trị mặc định','d={"a":1}\nd.get("b",0)  # -> 0','Lấy giá trị an toàn, trả về mặc định nếu thiếu key.','O(1)'),
+F('dict','items()','d={"a":1,"b":2}\nlist(d.items())\n# -> [("a",1),("b",2)]','Trả về các cặp khóa-giá trị dạng tuple.','O(n)'),
+F('dict','keys()','d={"a":1,"b":2}\nlist(d.keys())  # -> ["a","b"]','Trả về tất cả các khóa của dictionary.','O(n)'),
+F('dict','values()','d={"a":1,"b":2}\nlist(d.values())  # -> [1,2]','Trả về tất cả các giá trị của dictionary.','O(n)'),
+F('dict','update()','d={"a":1}\nd.update({"b":2})\n# -> {"a":1,"b":2}','Gộp một dictionary khác vào dictionary hiện tại.','O(k)'),
+F('dict','pop()','d={"a":1,"b":2}\nd.pop("a")  # -> 1, d={"b":2}','Xóa một khóa và trả về giá trị tương ứng.','O(1)'),
+F('dict','setdefault()','d={}\nd.setdefault("dem",0)\nd["dem"]+=1  # -> {"dem":1}','Lấy giá trị, tự thêm mặc định nếu khóa chưa tồn tại.','O(1)'),
+F('dict','Gộp hai dictionary','a={"x":1};b={"y":2}\n{**a,**b}  # -> {"x":1,"y":2}','Kết hợp hai dictionary thành một dictionary mới.','O(n+m)'),
+F('dict','Đảo khóa-giá trị','def dao_dict(d):\n    return {v:k for k,v in d.items()}','Hoán đổi khóa và giá trị của dictionary.','O(n)','dao_dict({"a":1,"b":2}) -> {1:"a",2:"b"}'),
+F('dict','Sắp xếp theo giá trị','d={"a":3,"b":1,"c":2}\ndict(sorted(d.items(),key=lambda x:x[1]))','Sắp xếp các cặp khóa-giá trị theo giá trị.','O(n log n)'),
+F('dict','Sắp xếp theo khóa','d={"b":2,"a":1}\ndict(sorted(d.items()))\n# -> {"a":1,"b":2}','Sắp xếp dictionary theo thứ tự khóa.','O(n log n)'),
+F('dict','Dictionary lồng nhau','d={"user":{"ten":"Ana","tuoi":25}}\nd["user"]["ten"]  # -> "Ana"','Dictionary có thể chứa dictionary khác bên trong.','O(1)'),
+F('dict','Dict Comprehension','binh_phuong={x:x*x for x in range(5)}\n# -> {0:0,1:1,2:4,3:9,4:16}','Tạo dictionary mới bằng cú pháp rút gọn.','O(n)'),
+F('dict','Đếm tần suất bằng dict','def dem_tan_suat(lst):\n    d={}\n    for x in lst:d[x]=d.get(x,0)+1\n    return d','Đếm số lần xuất hiện mỗi phần tử bằng dictionary.','O(n)','dem_tan_suat([1,1,2]) -> {1:2,2:1}'),
+F('dict','Xóa khóa an toàn','d={"a":1}\nd.pop("b",None)  # -> None, không lỗi','Xóa khóa mà không gây lỗi nếu khóa không tồn tại.','O(1)'),
+
+/* ================= MATH ================= */
+F('math','sqrt()','import math\nmath.sqrt(16)  # -> 4.0','Tính căn bậc hai của một số không âm.','O(1)'),
+F('math','ceil()','import math\nmath.ceil(4.2)  # -> 5','Làm tròn lên số nguyên gần nhất.','O(1)'),
+F('math','floor()','import math\nmath.floor(4.8)  # -> 4','Làm tròn xuống số nguyên gần nhất.','O(1)'),
+F('math','pow()','import math\nmath.pow(2,10)  # -> 1024.0','Tính x mũ y, trả về số thực.','O(log y)'),
+F('math','log()','import math\nmath.log(100,10)  # -> 2.0','Tính logarit của x theo cơ số cho trước.','O(1)'),
+F('math','sin()','import math\nmath.sin(math.pi/2)  # -> 1.0','Tính sin của một góc theo radian.','O(1)'),
+F('math','cos()','import math\nmath.cos(0)  # -> 1.0','Tính cos của một góc theo radian.','O(1)'),
+F('math','tan()','import math\nmath.tan(0)  # -> 0.0','Tính tan của một góc theo radian.','O(1)'),
+F('math','Hằng số pi','import math\nmath.pi  # -> 3.141592653589793','Hằng số toán học π.','O(1)'),
+F('math','Hằng số e','import math\nmath.e  # -> 2.718281828459045','Hằng số toán học e (số Euler).','O(1)'),
+F('math','factorial()','import math\nmath.factorial(5)  # -> 120','Tính n! bằng hàm tối ưu sẵn có.','O(n)'),
+F('math','comb()','import math\nmath.comb(5,2)  # -> 10','Tính tổ hợp chập k của n phần tử.','O(k)'),
+F('math','perm()','import math\nmath.perm(5,2)  # -> 20','Tính chỉnh hợp chập k của n phần tử.','O(k)'),
+F('math','gcd()','import math\nmath.gcd(48,18)  # -> 6','Tính ước chung lớn nhất bằng thư viện chuẩn.','O(log(min(a,b)))'),
+F('math','lcm()','import math\nmath.lcm(4,6)  # -> 12','Tính bội chung nhỏ nhất (Python 3.9+).','O(log(min(a,b)))'),
+F('math','isqrt()','import math\nmath.isqrt(50)  # -> 7','Tính căn bậc hai nguyên (làm tròn xuống).','O(log n)'),
+F('math','hypot()','import math\nmath.hypot(3,4)  # -> 5.0','Tính cạnh huyền/khoảng cách Euclid.','O(1)'),
+F('math','degrees() / radians()','import math\nmath.degrees(math.pi)  # -> 180.0\nmath.radians(180)  # -> 3.14159','Chuyển đổi giữa độ và radian.','O(1)'),
+
+/* ================= THUẬT TOÁN ================= */
+F('algo','Tìm kiếm nhị phân (Binary Search)','def binary_search(arr,x):\n    lo,hi=0,len(arr)-1\n    while lo<=hi:\n        mid=(lo+hi)//2\n        if arr[mid]==x:return mid\n        if arr[mid]<x:lo=mid+1\n        else:hi=mid-1\n    return -1','Tìm phần tử trong mảng đã sắp xếp bằng chia đôi.','O(log n)','binary_search([1,3,5,7,9],7) -> 3'),
+F('algo','Tìm kiếm tuyến tính','def linear_search(arr,x):\n    for i,v in enumerate(arr):\n        if v==x:return i\n    return -1','Duyệt tuần tự mảng để tìm giá trị mục tiêu.','O(n)','linear_search([4,2,7],2) -> 1'),
+F('algo','Bubble Sort','def bubble_sort(a):\n    n=len(a)\n    for i in range(n):\n        for j in range(n-i-1):\n            if a[j]>a[j+1]:a[j],a[j+1]=a[j+1],a[j]\n    return a','Sắp xếp nổi bọt bằng cách hoán đổi phần tử liền kề.','O(n²)'),
+F('algo','Selection Sort','def selection_sort(a):\n    for i in range(len(a)):\n        m=i\n        for j in range(i+1,len(a)):\n            if a[j]<a[m]:m=j\n        a[i],a[m]=a[m],a[i]\n    return a','Chọn phần tử nhỏ nhất và đưa về đúng vị trí mỗi lượt.','O(n²)'),
+F('algo','Insertion Sort','def insertion_sort(a):\n    for i in range(1,len(a)):\n        k=a[i];j=i-1\n        while j>=0 and a[j]>k:\n            a[j+1]=a[j];j-=1\n        a[j+1]=k\n    return a','Chèn từng phần tử vào đúng vị trí trong phần đã sắp xếp.','O(n²)'),
+F('algo','Merge Sort','def merge_sort(a):\n    if len(a)<=1:return a\n    m=len(a)//2\n    l,r=merge_sort(a[:m]),merge_sort(a[m:])\n    res=[]\n    while l and r:res.append((l if l[0]<=r[0] else r).pop(0))\n    return res+l+r','Chia mảng và trộn các nửa đã sắp xếp lại với nhau.','O(n log n)'),
+F('algo','Quick Sort','def quick_sort(a):\n    if len(a)<=1:return a\n    p=a[len(a)//2]\n    return quick_sort([x for x in a if x<p])+[x for x in a if x==p]+quick_sort([x for x in a if x>p])','Phân hoạch quanh phần tử chốt rồi sắp xếp đệ quy.','O(n log n) TB'),
+F('algo','DFS (Duyệt sâu)','def dfs(g,start,seen=None):\n    seen=seen or set()\n    seen.add(start)\n    for nb in g[start]:\n        if nb not in seen:dfs(g,nb,seen)\n    return seen','Duyệt đồ thị theo chiều sâu, đi càng xa càng tốt trước khi quay lui.','O(V+E)'),
+F('algo','BFS (Duyệt rộng)','from collections import deque\ndef bfs(g,start):\n    seen,q,order={start},deque([start]),[]\n    while q:\n        u=q.popleft();order.append(u)\n        for v in g[u]:\n            if v not in seen:seen.add(v);q.append(v)\n    return order','Duyệt đồ thị theo từng lớp bằng hàng đợi.','O(V+E)'),
+F('algo','Stack (Ngăn xếp)','stack=[]\nstack.append(1)  # push\nstack.pop()      # pop','Cấu trúc dữ liệu LIFO dùng list có sẵn.','O(1) mỗi thao tác'),
+F('algo','Queue (Hàng đợi)','from collections import deque\nq=deque()\nq.append(1)     # enqueue\nq.popleft()     # dequeue','Cấu trúc dữ liệu FIFO hiệu quả bằng deque.','O(1) mỗi thao tác'),
+F('algo','Đệ quy - Giai thừa','def fact_rec(n):\n    return 1 if n<=1 else n*fact_rec(n-1)','Hàm tự gọi lại chính nó để chia nhỏ bài toán.','O(n)'),
+F('algo','Memoization - Fibonacci','from functools import lru_cache\n@lru_cache(None)\ndef fib(n):\n    return n if n<=1 else fib(n-1)+fib(n-2)','Lưu cache kết quả để tránh tính toán lặp lại.','O(n)'),
+F('algo','Two Pointers','def co_cap_tong(a,t):\n    a.sort();lo,hi=0,len(a)-1\n    while lo<hi:\n        s=a[lo]+a[hi]\n        if s==t:return True\n        lo+=1 if s<t else 0\n        hi-=1 if s>=t else 0\n    return False','Dùng hai con trỏ tiến vào nhau để giải bài toán mảng.','O(n log n)'),
+F('algo','Sliding Window','def max_sum_k(a,k):\n    w=sum(a[:k]);best=w\n    for i in range(k,len(a)):\n        w+=a[i]-a[i-k];best=max(best,w)\n    return best','Duy trì cửa sổ trượt để tính toán trong một lượt duyệt.','O(n)'),
+F('algo','Prefix Sum','def prefix_sum(a):\n    p=[0]\n    for x in a:p.append(p[-1]+x)\n    return p','Tính tổng tiền tố để truy vấn tổng đoạn nhanh O(1).','O(n)'),
+F('algo','Sàng Eratosthenes','def sang_nguyen_to(n):\n    ip=[True]*(n+1);ip[0]=ip[1]=False\n    for i in range(2,int(n**0.5)+1):\n        if ip[i]:\n            for j in range(i*i,n+1,i):ip[j]=False\n    return [i for i,p in enumerate(ip) if p]','Tìm mọi số nguyên tố tới n bằng cách đánh dấu hợp số.','O(n log log n)','sang_nguyen_to(20) -> [2,3,5,7,11,13,17,19]'),
+F('algo','Kadane - Dãy con lớn nhất','def kadane(a):\n    best=cur=a[0]\n    for x in a[1:]:\n        cur=max(x,cur+x);best=max(best,cur)\n    return best','Tìm tổng dãy con liên tiếp lớn nhất trong mảng.','O(n)','kadane([-2,1,-3,4,-1,2,1]) -> 6'),
+F('algo','Đếm số lần xuất hiện lẻ (XOR)','def so_le_nhat(a):\n    r=0\n    for x in a:r^=x\n    return r','Tìm phần tử xuất hiện một lần duy nhất bằng XOR.','O(n)','so_le_nhat([1,2,2,3,3]) -> 1'),
+
+/* ================= HÀM DỰNG SẴN ================= */
+F('builtin','len()','len([1,2,3])  # -> 3\nlen("hello")  # -> 5','Trả về số lượng phần tử của một container.','O(1)'),
+F('builtin','type()','type(5)     # -> <class \'int\'>\ntype("hi")  # -> <class \'str\'>','Trả về kiểu dữ liệu của một đối tượng.','O(1)'),
+F('builtin','isinstance()','isinstance(5,int)  # -> True','Kiểm tra một đối tượng có thuộc kiểu chỉ định.','O(1)'),
+F('builtin','sorted()','sorted([3,1,2])  # -> [1,2,3]','Trả về danh sách mới đã sắp xếp, giữ nguyên bản gốc.','O(n log n)'),
+F('builtin','reversed()','list(reversed([1,2,3]))  # -> [3,2,1]','Trả về iterator đảo ngược của một dãy.','O(n)'),
+F('builtin','any()','any([False,True,False])  # -> True','Trả về True nếu có ít nhất một phần tử đúng.','O(n)'),
+F('builtin','all()','all([True,True,True])  # -> True','Trả về True chỉ khi tất cả phần tử đều đúng.','O(n)'),
+F('builtin','range()','list(range(2,10,2))  # -> [2,4,6,8]','Sinh một dãy số nguyên với bước nhảy tùy chọn.','O(1) khởi tạo'),
+F('builtin','id()','x=5\nid(x)  # -> địa chỉ vùng nhớ (int)','Trả về định danh (địa chỉ bộ nhớ) của đối tượng.','O(1)'),
+F('builtin','print() nâng cao','print(f"{3.14159:.2f}")  # -> 3.14\nprint("a","b",sep="-")  # -> a-b','Tùy chỉnh định dạng và dấu phân cách khi in.','O(n)'),
+F('builtin','input()','ten=input("Nhập tên: ")\nprint(f"Xin chào {ten}!")','Đọc một dòng dữ liệu từ bàn phím dưới dạng chuỗi.','O(n)'),
+F('builtin','divmod()','divmod(17,5)  # -> (3,2)','Trả về đồng thời thương và số dư.','O(1)'),
+F('builtin','abs()','abs(-7)  # -> 7','Trả về giá trị tuyệt đối của một số.','O(1)'),
+F('builtin','round()','round(3.14159,2)  # -> 3.14','Làm tròn số thực đến số chữ số thập phân cho trước.','O(1)'),
+F('builtin','format()','format(3.14159,".2f")  # -> "3.14"','Định dạng giá trị theo mẫu chỉ định.','O(1)'),
+F('builtin','repr()','repr("hi")  # -> "\'hi\'"','Trả về biểu diễn chuỗi có thể dùng lại trong code.','O(n)'),
+F('builtin','zip() nhiều iterable','a=[1,2];b=["x","y"];c=[True,False]\nlist(zip(a,b,c))','Ghép nhiều iterable lại theo từng bộ phần tử.','O(n)'),
+F('builtin','globals() / locals()','def f():\n    x=1\n    print(locals())  # -> {\'x\': 1}','Truy cập các biến trong phạm vi toàn cục/cục bộ.','O(n)'),
+F('builtin','callable()','callable(len)  # -> True\ncallable(5)    # -> False','Kiểm tra một đối tượng có thể gọi được (như hàm).','O(1)'),
+F('builtin','vars()','class A:pass\na=A();a.x=1\nvars(a)  # -> {\'x\': 1}','Trả về thuộc tính của một đối tượng dưới dạng dict.','O(n)'),
+];
+
+FUNCS.forEach((f,i)=>f.id='fn-'+i);
+
+/* ============================================================
+   TÔ SÁNG CÚ PHÁP (SYNTAX HIGHLIGHT)
+   ============================================================ */
+const PY_KEYWORDS=new Set(['def','return','while','for','if','else','elif','lambda','import','from','as','class','try','except','finally','raise','with','yield','in','is','not','and','or','pass','break','continue','global','nonlocal','assert','del','None','True','False']);
+const PY_BUILTINS=new Set(['len','print','range','enumerate','zip','map','filter','sorted','reversed','sum','max','min','abs','int','str','float','list','dict','set','tuple','frozenset','isinstance','type','id','ord','chr','divmod','input','open','any','all','round','repr','format','vars','callable','globals','locals']);
+
+function escapeHtml(str){
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function highlightPython(code){
+  const tokenRe=/(#.*$)|("""[\s\S]*?"""|'''[\s\S]*?'''|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|(\b\d+\.?\d*\b)|(\bself\b)|([A-Za-z_][A-Za-z0-9_]*)|([+\-*/%=<>!&|^~:]+)/gm;
+  let result='',lastIndex=0,m;
+  while((m=tokenRe.exec(code))!==null){
+    result+=escapeHtml(code.slice(lastIndex,m.index));
+    lastIndex=tokenRe.lastIndex;
+    if(m[1]){result+='<span class="tok-com">'+escapeHtml(m[1])+'</span>';}
+    else if(m[2]){result+='<span class="tok-str">'+escapeHtml(m[2])+'</span>';}
+    else if(m[3]){result+='<span class="tok-num">'+escapeHtml(m[3])+'</span>';}
+    else if(m[4]){result+='<span class="tok-self">'+escapeHtml(m[4])+'</span>';}
+    else if(m[5]){
+      const w=m[5];
+      if(PY_KEYWORDS.has(w))result+='<span class="tok-kw">'+w+'</span>';
+      else if(PY_BUILTINS.has(w))result+='<span class="tok-builtin">'+w+'</span>';
+      else{
+        const next=code[tokenRe.lastIndex];
+        result+= next==='(' ? '<span class="tok-fn">'+w+'</span>' : w;
+      }
+    }
+    else if(m[6]){result+='<span class="tok-op">'+escapeHtml(m[6])+'</span>';}
+  }
+  result+=escapeHtml(code.slice(lastIndex));
+  return result;
+}
+/* Cache mã đã highlight — tính một lần duy nhất để tránh giật lag khi render lại */
+FUNCS.forEach(f=>{f.highlighted=highlightPython(f.code);});
+
+/* ============================================================
+   TRẠNG THÁI
+   ============================================================ */
+let favorites=new Set(JSON.parse(localStorage.getItem('py_cheatsheet_favs_vi')||'[]'));
+let activeCategory='all';
+let searchTerm='';
+let searchDebounce=null;
+
+function saveFavorites(){
+  localStorage.setItem('py_cheatsheet_favs_vi',JSON.stringify([...favorites]));
+}
+
+/* ============================================================
+   RENDER SIDEBAR
+   ============================================================ */
+function renderSidebar(){
+  const navGroup=document.getElementById('navGroup');
+  const frag=document.createDocumentFragment();
+
+  const allItem=document.createElement('div');
+  allItem.className='nav-item'+(activeCategory==='all'?' active':'');
+  allItem.innerHTML=`<span>🏠</span><span>Tất cả</span><span class="nav-count">${FUNCS.length}</span>`;
+  allItem.onclick=()=>{activeCategory='all';renderSidebar();renderContent();};
+  frag.appendChild(allItem);
+
+  CATEGORIES.forEach(cat=>{
+    const count=cat.id==='favorites'?favorites.size:FUNCS.filter(f=>f.cat===cat.id).length;
+    const item=document.createElement('div');
+    item.className='nav-item'+(activeCategory===cat.id?' active':'');
+    item.innerHTML=`<span>${cat.icon}</span><span>${cat.label}</span><span class="nav-count">${count}</span>`;
+    item.onclick=()=>{
+      activeCategory=cat.id;
+      renderSidebar();
+      renderContent();
+      document.getElementById('sidebar').classList.remove('open');
+    };
+    frag.appendChild(item);
+  });
+
+  navGroup.innerHTML='';
+  navGroup.appendChild(frag);
+}
+
+/* ============================================================
+   RENDER NỘI DUNG
+   ============================================================ */
+function matchesSearch(f,term){
+  if(!term)return true;
+  term=term.toLowerCase();
+  return f.title.toLowerCase().includes(term)||
+         f.desc.toLowerCase().includes(term)||
+         f.code.toLowerCase().includes(term);
+}
+
+function getFilteredFuncs(){
+  let list=FUNCS;
+  if(activeCategory==='favorites'){list=list.filter(f=>favorites.has(f.id));}
+  else if(activeCategory!=='all'){list=list.filter(f=>f.cat===activeCategory);}
+  if(searchTerm){list=list.filter(f=>matchesSearch(f,searchTerm));}
+  return list;
+}
+
+function buildCard(f,idx){
+  const isFav=favorites.has(f.id);
+  const card=document.createElement('div');
+  card.className='card';
+  card.dataset.id=f.id;
+  card.innerHTML=`
+    <div class="card-header" data-toggle>
+      <div class="card-title"><span class="idx">#${idx}</span> ${f.title}</div>
+      <div class="card-actions">
+        <div class="icon-btn copy-btn" title="Sao chép">📋</div>
+        <div class="icon-btn fav-btn ${isFav?'active':''}" title="Yêu thích">⭐</div>
+        <div class="icon-btn collapse-btn" title="Thu gọn">▼</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="meta-row"><span class="meta-chip">Độ phức tạp: <b>${f.complexity||'N/A'}</b></span></div>
+      <div class="desc">${f.desc}</div>
+      <div class="code-block"><code>${f.highlighted}</code></div>
+      ${f.example?`<div class="example-label">Ví dụ</div><div class="example-box">${escapeHtml(f.example)}</div>`:''}
+    </div>
+  `;
+  card.querySelector('.card-header').addEventListener('click',(e)=>{
+    if(e.target.closest('.card-actions'))return;
+    toggleCollapse(card);
+  });
+  card.querySelector('.collapse-btn').addEventListener('click',(e)=>{e.stopPropagation();toggleCollapse(card);});
+  card.querySelector('.copy-btn').addEventListener('click',(e)=>{e.stopPropagation();copyToClipboard(f.code,e.currentTarget);});
+  card.querySelector('.fav-btn').addEventListener('click',(e)=>{e.stopPropagation();toggleFavorite(f.id,e.currentTarget);});
+  return card;
+}
+
+function toggleCollapse(card){
+  const body=card.querySelector('.card-body');
+  const btn=card.querySelector('.collapse-btn');
+  body.classList.toggle('collapsed');
+  btn.textContent=body.classList.contains('collapsed')?'▶':'▼';
+}
+
+function copyToClipboard(text,btn){
+  navigator.clipboard.writeText(text).then(()=>{
+    const original=btn.textContent;
+    btn.textContent='✓';
+    btn.classList.add('copied');
+    btn.title='Đã sao chép';
+    setTimeout(()=>{btn.textContent=original;btn.classList.remove('copied');btn.title='Sao chép';},1000);
+  }).catch(()=>{
+    const ta=document.createElement('textarea');
+    ta.value=text;document.body.appendChild(ta);ta.select();
+    document.execCommand('copy');document.body.removeChild(ta);
+  });
+}
+
+function toggleFavorite(id,btn){
+  if(favorites.has(id)){favorites.delete(id);btn.classList.remove('active');}
+  else{favorites.add(id);btn.classList.add('active');}
+  saveFavorites();
+  renderSidebar();
+  updateFooterCounts();
+  if(activeCategory==='favorites')renderContent();
+}
+
+function renderContent(){
+  const content=document.getElementById('content');
+  const filtered=getFilteredFuncs();
+  const frag=document.createDocumentFragment();
+
+  if(filtered.length===0){
+    const empty=document.createElement('div');
+    empty.className='empty-state';
+    empty.innerHTML=`<div class="big">🔍</div><div>Không tìm thấy hàm nào phù hợp. Hãy thử từ khóa hoặc danh mục khác.</div>`;
+    frag.appendChild(empty);
+  } else if(activeCategory==='all'){
+    CATEGORIES.filter(c=>c.id!=='favorites').forEach(cat=>{
+      const items=filtered.filter(f=>f.cat===cat.id);
+      if(items.length===0)return;
+      frag.appendChild(buildSection(`${cat.icon} ${cat.label}`,items));
+    });
+  } else if(activeCategory==='favorites'){
+    frag.appendChild(buildSection('⭐ Yêu thích',filtered));
+  } else {
+    const cat=CATEGORIES.find(c=>c.id===activeCategory);
+    frag.appendChild(buildSection(`${cat.icon} ${cat.label}`,filtered));
+  }
+
+  content.innerHTML='';
+  content.appendChild(frag);
+}
+
+function buildSection(heading,items){
+  const section=document.createElement('div');
+  section.className='category-section';
+  section.innerHTML=`<div class="category-heading">${heading} <span class="count-pill">${items.length} hàm</span></div>`;
+  const grid=document.createElement('div');
+  grid.className='grid';
+  const gridFrag=document.createDocumentFragment();
+  items.forEach((f,i)=>gridFrag.appendChild(buildCard(f,i+1)));
+  grid.appendChild(gridFrag);
+  section.appendChild(grid);
+  return section;
+}
+
+function updateFooterCounts(){
+  document.getElementById('totalCount').textContent=FUNCS.length;
+  document.getElementById('favCount').textContent=favorites.size;
+}
+
+/* ============================================================
+   THANH CÔNG CỤ
+   ============================================================ */
+function expandAll(){
+  document.querySelectorAll('.card-body').forEach(b=>b.classList.remove('collapsed'));
+  document.querySelectorAll('.collapse-btn').forEach(b=>b.textContent='▼');
+}
+function collapseAll(){
+  document.querySelectorAll('.card-body').forEach(b=>b.classList.add('collapsed'));
+  document.querySelectorAll('.collapse-btn').forEach(b=>b.textContent='▶');
+}
+function copyAll(){
+  const visible=getFilteredFuncs();
+  const text=visible.map(f=>`# ${f.title}\n${f.code}\n`).join('\n'+'#'.repeat(40)+'\n\n');
+  copyToClipboard(text,document.getElementById('copyAllBtn'));
+}
+function exportTxt(){
+  const visible=getFilteredFuncs();
+  const text=visible.map(f=>`${f.title}\n${'-'.repeat(f.title.length)}\n${f.desc}\n\n${f.code}\n\nĐộ phức tạp: ${f.complexity}\n`).join('\n'+'='.repeat(50)+'\n\n');
+  downloadFile('python_cheatsheet.txt',text);
+}
+function exportPy(){
+  const visible=getFilteredFuncs();
+  const text=visible.map(f=>`# ${f.title}\n# ${f.desc}\n${f.code}\n`).join('\n\n');
+  downloadFile('python_cheatsheet.py',text);
+}
+function downloadFile(filename,content){
+  const blob=new Blob([content],{type:'text/plain'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=filename;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/* ============================================================
+   GẮN SỰ KIỆN
+   ============================================================ */
+document.getElementById('searchInput').addEventListener('input',(e)=>{
+  const val=e.target.value;
+  clearTimeout(searchDebounce);
+  searchDebounce=setTimeout(()=>{searchTerm=val;renderContent();},120);
+});
+document.getElementById('copyAllBtn').addEventListener('click',copyAll);
+document.getElementById('expandAllBtn').addEventListener('click',expandAll);
+document.getElementById('collapseAllBtn').addEventListener('click',collapseAll);
+document.getElementById('exportTxtBtn').addEventListener('click',exportTxt);
+document.getElementById('exportPyBtn').addEventListener('click',exportPy);
+document.getElementById('backToTopBtn').addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+document.getElementById('menuToggle').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));
+
+const fab=document.getElementById('fab');
+fab.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+let scrollTicking=false;
+window.addEventListener('scroll',()=>{
+  if(!scrollTicking){
+    requestAnimationFrame(()=>{
+      if(window.scrollY>400)fab.classList.add('show');else fab.classList.remove('show');
+      scrollTicking=false;
+    });
+    scrollTicking=true;
+  }
+},{passive:true});
+
+document.addEventListener('keydown',(e)=>{
+  const ctrl=e.ctrlKey||e.metaKey;
+  if(ctrl&&e.key.toLowerCase()==='f'){e.preventDefault();document.getElementById('searchInput').focus();}
+  else if(ctrl&&e.shiftKey&&e.key.toLowerCase()==='c'){e.preventDefault();copyAll();}
+  else if(ctrl&&e.key.toLowerCase()==='e'){e.preventDefault();expandAll();}
+  else if(ctrl&&e.key.toLowerCase()==='q'){e.preventDefault();collapseAll();}
+  else if(ctrl&&e.key.toLowerCase()==='b'){e.preventDefault();window.scrollTo({top:0,behavior:'smooth'});}
+});
+
+/* ============================================================
+   KHỞI TẠO
+   ============================================================ */
+renderSidebar();
+renderContent();
+updateFooterCounts();
+</script>
+</body>
+</html>
